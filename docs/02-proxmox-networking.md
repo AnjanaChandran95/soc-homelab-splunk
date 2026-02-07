@@ -73,6 +73,8 @@ The following was verified on the VM:
 The management interface (vmbr0) will be **removed or disabled later** to keep the SOC lab isolated.
 
 
+
+
 ---
 
 
