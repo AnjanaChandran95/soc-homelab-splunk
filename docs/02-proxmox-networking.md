@@ -36,6 +36,42 @@ Interface ens18 is UP
 
 IP address 10.50.30.10/24 assigned
 
+## Ubuntu Target (Victim) VM Networking
+
+This VM acts as the **SSH brute-force target** for SOC attack simulations.
+
+### Dual-NIC Design
+
+The victim VM is dual-homed to separate **management access** from **attack traffic**.
+
+#### NIC 1 — SOC Lab Network
+- Interface: ens18
+- Proxmox bridge: vmbr4
+- IP address: 10.50.30.20/24 (static)
+- Purpose:
+  - Receives attack traffic from attacker VM (Kali)
+  - Sends authentication logs to Splunk SIEM
+
+#### NIC 2 — Management / Home Network
+- Interface: ens19
+- Proxmox bridge: vmbr0
+- IP address: 192.168.178.82/24 (DHCP)
+- Purpose:
+  - SSH access from host laptop
+  - Temporary internet access for setup
+
+### Verification
+
+The following was verified on the VM:
+
+- ens18 has IP `10.50.30.20/24`
+- ens19 has IP `192.168.178.82/24`
+- VM is reachable via SSH from host machine
+
+### Security Note
+
+The management interface (vmbr0) will be **removed or disabled later** to keep the SOC lab isolated.
+
 
 ---
 
