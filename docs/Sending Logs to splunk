@@ -1,0 +1,134 @@
+Step 1: Splunk Enterprise Setup (SIEM VM)
+
+Installed Splunk Enterprise.
+
+Enabled receiving on TCP port 9997 (default Splunk forwarder port).
+
+Verified listener:
+
+ss -lntp | grep 9997
+
+Confirmed Splunk is listening on:
+
+0.0.0.0:9997
+🔧 Step 2: Splunk Universal Forwarder Setup (Victim VM)
+
+Installed Splunk Universal Forwarder.
+
+Configured log inputs:
+
+inputs.conf
+
+[monitor:///var/log/auth.log]
+disabled = false
+index = linux
+sourcetype = linux_secure
+
+
+[monitor:///var/log/syslog]
+disabled = false
+index = linux
+sourcetype = syslog
+
+Configured forwarding destination:
+
+outputs.conf
+
+[tcpout]
+defaultGroup = splunk-indexer
+
+
+[tcpout:splunk-indexer]
+server = 10.50.30.10:9997
+
+Restarted forwarder:
+
+sudo /opt/splunkforwarder/bin/splunk restart
+🔍 Step 3: Connectivity & Troubleshooting
+✔ Network verification
+
+ICMP ping tested between victim and SIEM
+
+TCP connectivity verified:
+
+nc -vz 10.50.30.10 9997
+✔ Forwarder diagnostics
+
+Used btool to confirm effective configuration:
+
+sudo /opt/splunkforwarder/bin/splunk btool outputs list --debug
+sudo /opt/splunkforwarder/bin/splunk btool inputs list --debug
+
+Confirmed forwarder attempted connections to SIEM:
+
+Initializing connection for non-ssl forwarding to 10.50.30.10:9997
+⚠ Observed CLI quirk
+
+splunk list forward-server showed None
+
+This was confirmed to be normal behavior in single-node / lab setups
+
+Actual validation was done via search results, not CLI output
+
+📊 Step 4: Log Ingestion Validation in Splunk
+Successful ingestion confirmed using searches:
+index=* host=victim
+
+Observed:
+
+/var/log/syslog
+
+/var/log/auth.log
+
+sudo activity
+
+systemd events
+
+forwarder restarts
+
+Important finding
+
+Logs were indexed into main index, not linux
+
+This is expected behavior unless index enforcement is done on the indexer
+
+No ingestion failure occurred
+
+🧪 Step 5: Test Event Generation
+
+Executed test commands on victim:
+
+sudo logger "SOC LAB TEST EVENT $(date)"
+sudo su - wronguser
+
+These actions:
+
+Generated authentication and system logs
+
+Confirmed real-time ingestion into Splunk
+
+✅ Final Outcome
+
+✔ Splunk Enterprise successfully receives logs
+✔ Universal Forwarder successfully forwards logs
+✔ TCP 9997 pipeline verified
+✔ Auth & syslog events visible in Splunk
+✔ SOC data source is ready for detections
+
+🚀 Current SOC Capability
+
+At the end of today:
+
+Centralized logging is functional
+
+Host-based security telemetry is available
+
+Lab is ready for:
+
+SSH brute-force detection
+
+Privilege escalation monitoring
+
+MITRE ATT&CK mapping
+
+Alerts & dashboards

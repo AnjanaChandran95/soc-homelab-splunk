@@ -1,0 +1,16 @@
+In Victim Machine-
+
+- SSH verified listening on port 22
+- Successful and failed authentication events confirmed in `/var/log/auth.log`
+
+
+## Target Log Readiness (Ubuntu Victim)
+
+The Ubuntu target VM was prepared to generate authentication logs for SOC analysis.
+
+- SSH enabled and running
+- Password authentication enabled
+- Test user created for brute-force simulation
+- Logs verified in `/var/log/auth.log`
+
+These logs will be ingested into Splunk in the next phase.

@@ -8,3 +8,12 @@
 
 - Attacker VM (planned)  
   Kali Linux used to generate attack traffic.
+
+
+  What we used:
+
+Splunk Universal Forwarder on the victim
+
+It sends logs over TCP port 9997
+
+Splunk SIEM listens on that port

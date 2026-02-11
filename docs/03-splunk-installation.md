@@ -60,4 +60,8 @@ Open in browser:
 
 http://192.168.178.80:8000
 
+In Victim Machine-
+
+- SSH verified listening on port 22
+- Successful and failed authentication events confirmed in `/var/log/auth.log`
 
